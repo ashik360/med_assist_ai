@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hospital AI Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="title">🏥 Hospital AI Assistant</div>
+        <div class="status">● Online</div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <!-- The Message Contents will visible here! -->
+         <button id="viewHistoryBtn" class="history-btn" title="View History">🕔</button>
+    </div>
+
+    <div class="typing-indicator" id="typingIndicator">
+        AI is thinking...
+    </div>
+
+    <div class="chat-input">
+        <textarea id="userInput" rows="1" placeholder="Type your message..."></textarea>
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
