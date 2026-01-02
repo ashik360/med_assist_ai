@@ -4,6 +4,56 @@ const typingIndicator = document.getElementById("typingIndicator");
 const sendButton = document.querySelector(".chat-input button");
 const conversations = {}; // { sessionId: [ {user, bot}, ... ] }
 let sessionId = null;
+const viewHistoryBtn = document.getElementById("viewHistoryBtn");
+const historyModal = document.getElementById("historyModal");
+const closeHistory = document.getElementById("closeHistory");
+const historyContent = document.getElementById("historyContent");
+
+viewHistoryBtn.addEventListener("click", async () => {
+  if (!sessionId) {
+    alert("No session yet. Send a message first.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:3000/logs/${sessionId}`);
+    const logs = await response.json();
+
+    // Clear old history
+    historyContent.innerHTML = "";
+
+    // Show each log entry
+    logs.forEach(entry => {
+      const userMessage = document.createElement("div");
+      userMessage.className = "message user";
+      userMessage.textContent = entry.user.text;
+      historyContent.appendChild(userMessage);
+
+      const botMessage = document.createElement("div");
+      botMessage.className = "message bot";
+      botMessage.textContent = entry.bot.text;
+      historyContent.appendChild(botMessage);
+    });
+
+    // Open modal
+    historyModal.style.display = "block";
+  } catch (error) {
+    alert("Error fetching history.");
+  }
+});
+
+// Close modal when clicking X
+closeHistory.addEventListener("click", () => {
+  historyModal.style.display = "none";
+});
+
+// Close modal when clicking outside
+window.addEventListener("click", (event) => {
+  if (event.target === historyModal) {
+    historyModal.style.display = "none";
+  }
+});
+
 
 userInput.addEventListener("input", () => {
   sendButton.disabled = userInput.value.trim() === "";
@@ -126,7 +176,6 @@ function smoothScrollToBottom() {
 }
 
 
-const viewHistoryBtn = document.getElementById("viewHistoryBtn");
 
 viewHistoryBtn.addEventListener("click", async () => {
   if (!sessionId) {
