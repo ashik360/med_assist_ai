@@ -4,10 +4,13 @@ const typingIndicator = document.getElementById("typingIndicator");
 const sendButton = document.querySelector(".chat-input button");
 const conversations = {}; // { sessionId: [ {user, bot}, ... ] }
 let sessionId = null;
+let welcomeShown = false;
 const viewHistoryBtn = document.getElementById("viewHistoryBtn");
 const historyModal = document.getElementById("historyModal");
 const closeHistory = document.getElementById("closeHistory");
 const historyContent = document.getElementById("historyContent");
+const downloadHistoryBtn = document.getElementById("downloadHistoryBtn");
+
 
 viewHistoryBtn.addEventListener("click", async () => {
   if (!sessionId) {
@@ -62,7 +65,20 @@ userInput.addEventListener("input", () => {
 });
 
 // Welcome Text
-window.addEventListener("load", () => {
+// window.addEventListener("load", () => {
+//   const welcomeMessage = document.createElement("div");
+//   welcomeMessage.className = "message bot";
+//   chatMessages.appendChild(welcomeMessage);
+
+//   const welcomeText =
+//     "Hello! I am your hospital AI assistant. How can I help you today?";
+
+//   typeWriterEffect(welcomeMessage, welcomeText, 18);
+// });
+
+function showWelcomeMessage() {
+  chatMessages.innerHTML = ""; // clear old chat (optional)
+
   const welcomeMessage = document.createElement("div");
   welcomeMessage.className = "message bot";
   chatMessages.appendChild(welcomeMessage);
@@ -71,7 +87,7 @@ window.addEventListener("load", () => {
     "Hello! I am your hospital AI assistant. How can I help you today?";
 
   typeWriterEffect(welcomeMessage, welcomeText, 18);
-});
+}
 
 // ✅ Single Enter sends, Shift+Enter makes new line
 userInput.addEventListener("keydown", (e) => {
@@ -175,11 +191,9 @@ function smoothScrollToBottom() {
   });
 }
 
-
-
-viewHistoryBtn.addEventListener("click", async () => {
+downloadHistoryBtn.addEventListener("click", async () => {
   if (!sessionId) {
-    alert("No session yet. Send a message first.");
+    alert("No session to download.");
     return;
   }
 
@@ -187,24 +201,21 @@ viewHistoryBtn.addEventListener("click", async () => {
     const response = await fetch(`http://localhost:3000/logs/${sessionId}`);
     const logs = await response.json();
 
-    // Clear chat window before showing history
-    chatMessages.innerHTML = "";
-
-    // Show each log entry
-    logs.forEach(entry => {
-      const userMessage = document.createElement("div");
-      userMessage.className = "message user";
-      userMessage.textContent = entry.user.text;
-      chatMessages.appendChild(userMessage);
-
-      const botMessage = document.createElement("div");
-      botMessage.className = "message bot";
-      botMessage.textContent = entry.bot.text;
-      chatMessages.appendChild(botMessage);
+    const blob = new Blob([JSON.stringify(logs, null, 2)], {
+      type: "application/json",
     });
 
-    smoothScrollToBottom();
-  } catch (error) {
-    alert("Error fetching history.");
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `chat-history-${sessionId}.json`;
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    alert("Failed to download history.");
   }
 });
+

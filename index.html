@@ -1,129 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Floating AI Assistant</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hospital AI Assistant</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Home Screen Content -->
+    <div class="home-screen">
+      <h1 class="home-title">🏥 Medical AI Assistant</h1>
+      <p class="home-subtitle">
+        Your intelligent healthcare companion for medical inquiries, symptom
+        analysis, and health guidance. Click the floating icon in the bottom
+        right to get started.
+      </p>
 
-<!-- Home Screen Content -->
-<div class="home-screen">
-    <h1 class="home-title">🏥 Medical AI Assistant</h1>
-    <p class="home-subtitle">Your intelligent healthcare companion for medical inquiries, symptom analysis, and health guidance. Click the floating icon in the bottom right to get started.</p>
-    
-    <div class="home-features">
+      <div class="home-features">
         <div class="feature">
-            <div class="feature-icon">💬</div>
-            <div class="feature-title">24/7 Availability</div>
-            <div class="feature-desc">Get immediate responses to your medical questions anytime, day or night.</div>
+          <div class="feature-icon">💬</div>
+          <div class="feature-title">24/7 Availability</div>
+          <div class="feature-desc">
+            Get immediate responses to your medical questions anytime, day or
+            night.
+          </div>
         </div>
-        
+
         <div class="feature">
-            <div class="feature-icon">🔒</div>
-            <div class="feature-title">Secure & Private</div>
-            <div class="feature-desc">Your conversations are encrypted and never stored on external servers.</div>
+          <div class="feature-icon">🔒</div>
+          <div class="feature-title">Secure & Private</div>
+          <div class="feature-desc">
+            Your conversations are encrypted and never stored on external
+            servers.
+          </div>
         </div>
-        
+
         <div class="feature">
-            <div class="feature-icon">⚕️</div>
-            <div class="feature-title">Medical Guidance</div>
-            <div class="feature-desc">Receive evidence-based health information and symptom analysis.</div>
+          <div class="feature-icon">⚕️</div>
+          <div class="feature-title">Medical Guidance</div>
+          <div class="feature-desc">
+            Receive evidence-based health information and symptom analysis.
+          </div>
         </div>
+      </div>
+
+      <p style="margin-top: 50px; font-size: 0.9rem; opacity: 0.7">
+        Note: This AI assistant provides informational guidance only and is not
+        a substitute for professional medical advice.
+      </p>
     </div>
-    
-    <p style="margin-top: 50px; font-size: 0.9rem; opacity: 0.7;">Note: This AI assistant provides informational guidance only and is not a substitute for professional medical advice.</p>
-</div>
 
-<!-- Floating Icon -->
-<div class="floating-icon" id="floatingIcon">
-    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" alt="AI Assistant">
-</div>
+    <!-- Floating Icon -->
+    <div class="floating-icon" id="floatingIcon">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png"
+        alt="AI Assistant"
+      />
+    </div>
 
-<!-- Chat Container (hidden by default) -->
-<div class="chat-container compact" id="chatContainer">
-    <div class="chat-header">
+    <!-- Chat Container (hidden by default) -->
+    <div class="chat-container compact" id="chatContainer">
+      <div class="chat-header">
         <!-- Close button for chat -->
-        <button id="closeChatBtn" class="close-chat-btn" title="Close Chat">✕</button>
-        
+        <button id="closeChatBtn" class="close-chat-btn" title="Close Chat">
+          ✕
+        </button>
+
         <!-- Fullscreen toggle button -->
-        <button id="toggleFullscreenBtn" class="header-btn toggleFs-btn" title="Toggle Fullscreen/Collapse">⛶</button>
+        <button
+          id="toggleFullscreenBtn"
+          class="header-btn toggleFs-btn"
+          title="Toggle Fullscreen/Collapse"
+        >
+          ⛶
+        </button>
 
         <div class="title">🏥 AI Assistant</div>
         <div class="status">● Online</div>
+      </div>
 
-    </div>
-
-    <div class="chat-messages" id="chatMessages">
+      <div class="chat-messages" id="chatMessages">
         <!-- History button -->
-        <button id="viewHistoryBtn" class="header-btn history-btn" title="View History">🕔</button>
+        <button
+          id="viewHistoryBtn"
+          class="header-btn history-btn"
+          title="View History"
+        >
+          🕔
+        </button>
         <!-- The Message Contents will visible here! -->
-    </div>
+      </div>
 
-    <div class="typing-indicator" id="typingIndicator">
-        AI is thinking...
-    </div>
+      <div class="typing-indicator" id="typingIndicator">AI is thinking...</div>
 
-    <div class="chat-input">
-        <textarea type="text" id="userInput" rows="1" placeholder="Type your message..."></textarea>
+      <div class="chat-input">
+        <textarea
+          type="text"
+          id="userInput"
+          rows="1"
+          placeholder="Type your message..."
+        ></textarea>
         <button onclick="sendMessage()">Send</button>
+      </div>
     </div>
-</div>
 
-<!-- History Modal -->
-<div id="historyModal" class="modal">
-    <div class="modal-content">
+    <!-- History Modal -->
+    <div id="historyModal" class="modal">
+      <div class="modal-content">
         <span id="closeHistory" class="close-modal">&times;</span>
         <h2>Conversation History</h2>
         <div id="historyContent"></div>
-        <button id="downloadHistoryBtn" class="download-btn">⬇️ Download JSON</button>
+        <button id="downloadHistoryBtn" class="download-btn">
+          ⬇️ Download JSON
+        </button>
+      </div>
     </div>
-</div>
 
-<script src="script.js"></script>
-<script>
-    // Floating icon and chat toggle functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const floatingIcon = document.getElementById('floatingIcon');
-        const chatContainer = document.getElementById('chatContainer');
-        const closeChatBtn = document.getElementById('closeChatBtn');
-        const toggleFullscreenBtn = document.getElementById('toggleFullscreenBtn');
-        
+    <script src="script.js"></script>
+    <script>
+      // Floating icon and chat toggle functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const floatingIcon = document.getElementById("floatingIcon");
+        const chatContainer = document.getElementById("chatContainer");
+        const closeChatBtn = document.getElementById("closeChatBtn");
+        const toggleFullscreenBtn = document.getElementById(
+          "toggleFullscreenBtn"
+        );
+
         // Toggle chat visibility when floating icon is clicked
-        floatingIcon.addEventListener('click', function() {
-            chatContainer.classList.add('visible');
+        floatingIcon.addEventListener("click", function () {
+          chatContainer.classList.add("visible");
+          showWelcomeMessage();
         });
-        
+
+        function showWelcomeMessage() {
+          if (welcomeShown) return; // ⛔ stop if already shown
+
+          const welcomeMessage = document.createElement("div");
+          welcomeMessage.className = "message bot";
+          chatMessages.appendChild(welcomeMessage);
+
+          const welcomeText =
+            "Hello! I am your hospital AI assistant. How can I help you today?";
+
+          typeWriterEffect(welcomeMessage, welcomeText, 18);
+
+          welcomeShown = true; // ✅ mark as shown
+        }
+
         // Close chat when close button is clicked
-        closeChatBtn.addEventListener('click', function() {
-            chatContainer.classList.remove('visible');
+        closeChatBtn.addEventListener("click", function () {
+          chatContainer.classList.remove("visible");
         });
-        
+
         // Keep existing fullscreen toggle functionality
-        toggleFullscreenBtn.addEventListener('click', function() {
-            if (chatContainer.classList.contains('compact')) {
-                chatContainer.classList.remove('compact');
-                chatContainer.classList.add('expanded');
-                toggleFullscreenBtn.textContent = '⛶';
-                toggleFullscreenBtn.title = 'Collapse';
-            } else {
-                chatContainer.classList.remove('expanded');
-                chatContainer.classList.add('compact');
-                toggleFullscreenBtn.textContent = '⛶';
-                toggleFullscreenBtn.title = 'Expand to Fullscreen';
-            }
+        toggleFullscreenBtn.addEventListener("click", function () {
+          if (chatContainer.classList.contains("compact")) {
+            chatContainer.classList.remove("compact");
+            chatContainer.classList.add("expanded");
+            toggleFullscreenBtn.textContent = "⛶";
+            toggleFullscreenBtn.title = "Collapse";
+          } else {
+            chatContainer.classList.remove("expanded");
+            chatContainer.classList.add("compact");
+            toggleFullscreenBtn.textContent = "⛶";
+            toggleFullscreenBtn.title = "Expand to Fullscreen";
+          }
         });
-        
+
         // Close chat when clicking outside of it (optional)
-        document.addEventListener('click', function(event) {
-            const isClickInsideChat = chatContainer.contains(event.target);
-            const isClickOnFloatingIcon = floatingIcon.contains(event.target);
-            
-            if (!isClickInsideChat && !isClickOnFloatingIcon && chatContainer.classList.contains('visible')) {
-                chatContainer.classList.remove('visible');
-            }
+        document.addEventListener("click", function (event) {
+          const isClickInsideChat = chatContainer.contains(event.target);
+          const isClickOnFloatingIcon = floatingIcon.contains(event.target);
+
+          if (
+            !isClickInsideChat &&
+            !isClickOnFloatingIcon &&
+            chatContainer.classList.contains("visible")
+          ) {
+            chatContainer.classList.remove("visible");
+          }
         });
-    });
-</script>
-</body>
+      });
+    </script>
+  </body>
 </html>
