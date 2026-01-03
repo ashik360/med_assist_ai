@@ -23,7 +23,7 @@ body {
 /* ================= CHAT CONTAINER ================= */
 .chat-container {
   width: 380px;
-  height: 400px;
+  height: 500px;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
@@ -77,6 +77,12 @@ body {
   top: 12px;
 }
 
+.history-btn{
+  position: absolute;
+  top: 75px;
+  right: 10px;
+}
+
 .close-chat-btn {
   position: absolute;
   right: 12px;
@@ -87,6 +93,10 @@ body {
 .toggleFs-btn:hover,
 .close-chat-btn:hover {
   color: #87f5fd;
+}
+
+.typing-indicator{
+  display: none;
 }
 
 /* ================= MESSAGES ================= */
@@ -147,6 +157,8 @@ body {
   padding: 10px;
   border-top: 1px solid #ddd;
   background: #fff;
+  border-radius: 12px;
+  border-bottom: transparent;
 }
 
 .chat-input textarea {
@@ -156,13 +168,30 @@ body {
   border-radius: 6px;
   border: 1px solid #ccc;
   outline: none;
-  max-height: 120px;
+  max-height: 35px;
 }
 
 .chat-input textarea:focus {
   border-color: #2c7be5;
   box-shadow: 0 0 0 2px rgba(44, 123, 229, 0.2);
 }
+
+textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+#userInput {
+  resize: none;              /* removes resize handle */
+  overflow-y: auto;          /* keeps scrolling working */
+  scrollbar-width: none;     /* Firefox */
+}
+
+#userInput::-webkit-scrollbar {
+  width: 0;
+}
+
 
 .chat-input button {
   margin-left: 8px;
@@ -271,12 +300,25 @@ body {
   z-index: 1003;
 }
 
+.close-modal{
+  text-align: right;
+}
+
 .modal-content {
   background: #fff;
   margin: 10% auto;
   padding: 20px;
   border-radius: 8px;
   max-width: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.download-btn{
+  color: #fff;
+  background: #1a5bb8;
+  border: none;
+  height: 2rem;
 }
 
 /* ================= ANIMATIONS ================= */
@@ -364,7 +406,7 @@ body {
         .close-chat-btn {
             position: absolute;
             top: 15px;
-            right: 50px;
+            right: 15px;
             background: transparent;
             border: none;
             color: white;

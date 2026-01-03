@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <title>Floating AI Assistant</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        
-    </style>
 </head>
 <body>
 
@@ -55,11 +52,11 @@
         <div class="title">🏥 AI Assistant</div>
         <div class="status">● Online</div>
 
-        <!-- History button -->
-        <button id="viewHistoryBtn" class="header-btn history-btn" title="View History">🕔</button>
     </div>
 
     <div class="chat-messages" id="chatMessages">
+        <!-- History button -->
+        <button id="viewHistoryBtn" class="header-btn history-btn" title="View History">🕔</button>
         <!-- The Message Contents will visible here! -->
     </div>
 
@@ -68,7 +65,7 @@
     </div>
 
     <div class="chat-input">
-        <textarea id="userInput" rows="1" placeholder="Type your message..."></textarea>
+        <textarea type="text" id="userInput" rows="1" placeholder="Type your message..."></textarea>
         <button onclick="sendMessage()">Send</button>
     </div>
 </div>
@@ -76,7 +73,7 @@
 <!-- History Modal -->
 <div id="historyModal" class="modal">
     <div class="modal-content">
-        <span id="closeHistory" class="close">&times;</span>
+        <span id="closeHistory" class="close-modal">&times;</span>
         <h2>Conversation History</h2>
         <div id="historyContent"></div>
         <button id="downloadHistoryBtn" class="download-btn">⬇️ Download JSON</button>
