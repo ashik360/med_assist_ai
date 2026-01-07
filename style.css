@@ -96,6 +96,7 @@ body {
 
 .typing-indicator{
   display: none;
+  margin-left: 1rem;
 }
 
 /* ================= MESSAGES ================= */
@@ -400,7 +401,7 @@ textarea {
             align-items: center;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(44, 123, 229, 0.3);
-            z-index: .5;
+            /* z-index: .5; */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             animation: pulse 2s infinite;
         }
