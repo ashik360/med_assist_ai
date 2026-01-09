@@ -26,9 +26,12 @@ app.use(cors());
 app.use(express.json({ limit: "1mb" }));
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 app.get('/', (req, res) => {
   res.send('Hospital AI Backend is running...');
 =======
+=======
+>>>>>>> Stashed changes
 /**
  * Root check
  */
@@ -164,6 +167,7 @@ app.get("/logs/:sessionId", (req, res) => {
  */
 app.listen(PORT, () => {
   console.log(`🚑 Hospital AI Backend (Phi) running at http://localhost:${PORT}`);
+<<<<<<< Updated upstream
 });
 
 // post - structured
@@ -208,4 +212,6 @@ app.get('/logs/:sessionId', (req, res) => {
     return res.status(404).json({ error: "Session not found" });
   }
   res.json(conversations[sid]);
+=======
+>>>>>>> Stashed changes
 });
