@@ -10,7 +10,8 @@ const historyModal = document.getElementById("historyModal");
 const closeHistory = document.getElementById("closeHistory");
 const historyContent = document.getElementById("historyContent");
 const downloadHistoryBtn = document.getElementById("downloadHistoryBtn");
-
+const aiProgressBar = document.getElementById("aiProgressBar");
+const aiThinkingText = document.getElementById("aiThinkingText");
 
 viewHistoryBtn.addEventListener("click", async () => {
   if (!sessionId) {
@@ -26,7 +27,7 @@ viewHistoryBtn.addEventListener("click", async () => {
     historyContent.innerHTML = "";
 
     // Show each log entry
-    logs.forEach(entry => {
+    logs.forEach((entry) => {
       const userMessage = document.createElement("div");
       userMessage.className = "message user";
       userMessage.textContent = entry.user.text;
@@ -44,6 +45,67 @@ viewHistoryBtn.addEventListener("click", async () => {
     alert("Error fetching history.");
   }
 });
+document.addEventListener("DOMContentLoaded", function () {
+  const floatingIcon = document.getElementById("floatingIcon");
+  const chatContainer = document.getElementById("chatContainer");
+  const closeChatBtn = document.getElementById("closeChatBtn");
+  const toggleFullscreenBtn = document.getElementById("toggleFullscreenBtn");
+
+  // Toggle chat visibility when floating icon is clicked
+  floatingIcon.addEventListener("click", function () {
+    chatContainer.classList.add("visible");
+    showWelcomeMessage();
+  });
+
+  function showWelcomeMessage() {
+    if (welcomeShown) return; // ⛔ stop if already shown
+
+    const welcomeMessage = document.createElement("div");
+    welcomeMessage.className = "message bot";
+    chatMessages.appendChild(welcomeMessage);
+
+    const welcomeText =
+      "Hello! I am your hospital AI assistant. How can I help you today?";
+
+    typeWriterEffect(welcomeMessage, welcomeText, 18);
+
+    welcomeShown = true; // ✅ mark as shown
+  }
+
+  // Close chat when close button is clicked
+  closeChatBtn.addEventListener("click", function () {
+    chatContainer.classList.remove("visible");
+  });
+
+  // Keep existing fullscreen toggle functionality
+  toggleFullscreenBtn.addEventListener("click", function () {
+    if (chatContainer.classList.contains("compact")) {
+      chatContainer.classList.remove("compact");
+      chatContainer.classList.add("expanded");
+      toggleFullscreenBtn.textContent = "⛶";
+      toggleFullscreenBtn.title = "Collapse";
+    } else {
+      chatContainer.classList.remove("expanded");
+      chatContainer.classList.add("compact");
+      toggleFullscreenBtn.textContent = "⛶";
+      toggleFullscreenBtn.title = "Expand to Fullscreen";
+    }
+  });
+
+  // Close chat when clicking outside of it (optional)
+  document.addEventListener("click", function (event) {
+    const isClickInsideChat = chatContainer.contains(event.target);
+    const isClickOnFloatingIcon = floatingIcon.contains(event.target);
+
+    if (
+      !isClickInsideChat &&
+      !isClickOnFloatingIcon &&
+      chatContainer.classList.contains("visible")
+    ) {
+      chatContainer.classList.remove("visible");
+    }
+  });
+});
 
 // Close modal when clicking X
 closeHistory.addEventListener("click", () => {
@@ -56,7 +118,6 @@ window.addEventListener("click", (event) => {
     historyModal.style.display = "none";
   }
 });
-
 
 userInput.addEventListener("input", () => {
   sendButton.disabled = userInput.value.trim() === "";
@@ -111,31 +172,41 @@ async function sendMessage() {
 
   input.value = "";
   smoothScrollToBottom();
-  typingIndicator.style.display = "block";
 
   try {
+    startAIThinking();
+
     const response = await fetch("http://localhost:3000/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: messageText, sessionId }),
     });
 
-    const data = await response.json();
-    sessionId = data.sessionId; // ✅ save sessionId
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Backend error: ${response.status} ${errText}`);
+    }
 
-    typingIndicator.style.display = "none";
+    const data = await response.json();
+    stopAIThinking();
+
+    sessionId = data.sessionId;
 
     const botMessage = document.createElement("div");
     botMessage.className = "message bot";
     chatMessages.appendChild(botMessage);
+
     typeWriterEffect(botMessage, data.bot.text, 18);
   } catch (error) {
-    typingIndicator.style.display = "none";
+    stopAIThinking();
+    console.error("Chat error:", error);
+
     const errorMessage = document.createElement("div");
     errorMessage.className = "message bot";
     errorMessage.textContent = "Error connecting to backend.";
     chatMessages.appendChild(errorMessage);
   }
+
   console.log("Current sessionId:", sessionId);
 }
 
@@ -166,23 +237,22 @@ function typeWriterEffect(element, text, speed = 20) {
   type();
 }
 
-function showThinkingMessage() {
-  const thinkingMessage = document.createElement("div");
-  thinkingMessage.className = "message bot thinking";
-  thinkingMessage.textContent = "Thinking";
-  typingIndicator.style.display = "none";
+let dotCount = 0;
+let currentText = "AI is thinking";
 
-  chatMessages.appendChild(thinkingMessage);
-  smoothScrollToBottom();
-
-  let dots = 0;
-  const interval = setInterval(() => {
-    dots = (dots + 1) % 4;
-    thinkingMessage.textContent = "AI making rasponses" + ".".repeat(dots);
-  }, 400);
-
-  return { thinkingMessage, interval };
+function animateDots() {
+  dotCount = (dotCount + 1) % 4; // 0 to 3 dots
+  aiThinkingText.textContent = currentText + ".".repeat(dotCount);
 }
+
+// Start dot animation
+const dotInterval = setInterval(animateDots, 500);
+
+// Change text after 3 seconds
+setTimeout(() => {
+  currentText = "Assistant is writing";
+  dotCount = 0;
+}, 3000);
 
 function smoothScrollToBottom() {
   chatMessages.scrollTo({
@@ -219,3 +289,12 @@ downloadHistoryBtn.addEventListener("click", async () => {
   }
 });
 
+function startAIThinking() {
+  aiProgressBar.style.opacity = "1";
+  aiThinkingText.style.opacity = "1";
+}
+
+function stopAIThinking() {
+  aiProgressBar.style.opacity = "0";
+  aiThinkingText.style.opacity = "0";
+}
