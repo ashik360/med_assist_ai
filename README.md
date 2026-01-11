@@ -1,28 +1,35 @@
-# Hospital AI Backend
+# 🏥 Hospital AI Backend
 
-This is a simple backend API for a hospital AI application, powered by a natural language processing model (Phi) that interacts with users, provides factual responses, and stores conversation logs.
+This is a simple backend API for a hospital AI application, powered by a natural language processing model (**Phi**) via **Ollama**. The system interacts with users, provides factual responses, and stores conversation logs per session.
 
-## Table of Contents
-1. [Technologies Used](#technologies-used)
-2. [Installation](#installation)
-3. [Running the Server](#running-the-server)
-4. [API Endpoints](#api-endpoints)
-5. [License](#license)
+---
 
-## Technologies Used
+## 1. 📑 Table of Contents
 
-- **Node.js**: Server-side JavaScript environment.
-- **Express.js**: Web framework for Node.js.
-- **Ollama**: Model API for natural language processing (Phi model).
-- **UUID**: For generating unique session IDs.
-- **CORS**: Middleware to handle cross-origin requests.
-- **Fetch**: API request library to interact with Ollama model locally.
+1. [Technologies Used](#2-technologies-used)
+2. [Installation](#3-installation)
+3. [Running the Server](#4-running-the-server)
+4. [API Endpoints](#5-api-endpoints)
+5. [Error Handling](#6-error-handling)
+6. [License](#7-license)
 
-## Installation
+---
 
-To set up this backend on your local machine, follow the steps below:
+## 2. 🛠 Technologies Used
 
-### 1. Clone the repository
+- **Node.js** – Server-side JavaScript runtime  
+- **Express.js** – Web framework for Node.js  
+- **Ollama** – Local LLM API (Phi model)  
+- **UUID** – Generates unique session IDs  
+- **CORS** – Enables cross-origin requests  
+- **Fetch** – Used to communicate with the Ollama API  
+
+---
+
+## 3. 📦 Installation
+
+### 3.1 Clone the repository
+
 ```bash
 git clone <repository-url>
 cd hospital-ai-backend
