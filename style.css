@@ -81,6 +81,7 @@ body {
   position: absolute;
   top: 75px;
   right: 10px;
+  z-index: 1002;
 }
 
 .close-chat-btn {
