@@ -4,7 +4,6 @@ const express = require("express");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 
-// Node 18+ has fetch built-in, no need for node-fetch
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -26,11 +25,16 @@ app.get("/", (req, res) => {
  */
 app.get("/health/ollama", async (req, res) => {
   try {
-    const r = await fetch("http://localhost:11434/api/tags");
-    if (!r.ok) throw new Error("Ollama not available");
+    const r = await fetch("http://127.0.0.1:11434/api/tags");
+    if (!r.ok) {
+      throw new Error(`Ollama returned ${r.status}`);
+    }
     res.json({ status: "ok" });
   } catch (err) {
-    res.status(503).json({ status: "error", message: err.message });
+    res.status(503).json({
+      status: "error",
+      message: err.message,
+    });
   }
 });
 
@@ -49,34 +53,36 @@ app.post("/chat", async (req, res) => {
   const prompt = `
 You are a factual and neutral AI assistant.
 Rules:
-- Answer clearly and directly
-- Do not invent facts
-- If you are unsure, say you do not know
-- Do not add headings or labels
-- Do not repeat the question
-
+Answer clearly and directly
+Do not invent facts
+If you are unsure, say you do not know
+Do not add headings or labels
+Do not repeat the question
 ${message}
 `.trim();
 
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 18000); // 180s
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 480_000); // 480 seconds
 
-    const response = await fetch("http://localhost:11434/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "qwen3:4b",
-        prompt,
-        stream: false,
-        options: {
-          temperature: 0.1,
-          top_p: 0.9,
-          num_ctx: 2048,
-        },
-      }),
-      signal: controller.signal,
-    });
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:11434/api/generate",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({
+          model: "qwen3:4b",
+          prompt,
+          stream: false,
+          options: {
+            temperature: 0.1,
+            top_p: 0.9,
+            num_ctx: 2048,
+          },
+        }),
+      }
+    );
 
     clearTimeout(timeout);
 
@@ -86,8 +92,8 @@ ${message}
     }
 
     const data = await response.json();
-    let reply = (data.response || "").trim();
 
+    let reply = (data.response || "").trim();
     if (!reply) {
       reply = "I’m not able to provide a reliable answer at the moment.";
     }
@@ -104,7 +110,9 @@ ${message}
       },
     };
 
-    if (!conversations[sid]) conversations[sid] = [];
+    if (!conversations[sid]) {
+      conversations[sid] = [];
+    }
     conversations[sid].push(entry);
 
     res.json({
@@ -112,7 +120,14 @@ ${message}
       ...entry,
     });
   } catch (err) {
-    console.error("Chat error:", err.name, err.message);
+    clearTimeout(timeout);
+
+    console.error("Chat error:", {
+      name: err.name,
+      message: err.message,
+      cause: err.cause,
+      stack: err.stack,
+    });
 
     res.status(500).json({
       error: "LLM processing failed",
@@ -129,9 +144,11 @@ ${message}
  */
 app.get("/logs/:sessionId", (req, res) => {
   const sid = req.params.sessionId;
+
   if (!conversations[sid]) {
     return res.status(404).json({ error: "Session not found" });
   }
+
   res.json(conversations[sid]);
 });
 
@@ -139,5 +156,7 @@ app.get("/logs/:sessionId", (req, res) => {
  * Start server
  */
 app.listen(PORT, () => {
-  console.log(`🚑 Hospital AI Backend (qwen3:4b) running at http://localhost:${PORT}`);
+  console.log(
+    `🚑 Hospital AI Backend (qwen3:4b) running at http://localhost:${PORT}`
+  );
 });
