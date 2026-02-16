@@ -29,14 +29,15 @@ app.get("/health/ollama", async (req, res) => {
   try {
     const r = await fetch("http://localhost:11434/api/tags");
     if (!r.ok) throw new Error("Ollama not available");
-    res.json({ status: "ok" });
+    const tags = await r.json();
+    res.json({ status: "ok", models: tags.models || [] });
   } catch (err) {
     res.status(503).json({ status: "error", message: err.message });
   }
 });
 
 /**
- * Chat endpoint (Phi)
+ * Chat endpoint (Phi3:instruct)
  */
 app.post("/chat", async (req, res) => {
   const { message, sessionId } = req.body;
@@ -48,9 +49,8 @@ app.post("/chat", async (req, res) => {
   const sid = sessionId || uuidv4();
 
   /**
-   * Phi-optimized prompt:
-   * - No labels (Question/Answer)
-   * - No role-play
+   * Phi3:instruct-optimized prompt:
+   * - Clear, factual, neutral
    * - Allows refusal
    * - Natural output
    */
@@ -68,13 +68,13 @@ ${message}
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 90000); // 90s
+    const timeout = setTimeout(() => controller.abort(), 300000); // 5 min
 
     const response = await fetch("http://localhost:11434/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "phi",
+        model: "phi3:instruct",   // <-- updated model name
         prompt,
         stream: false,
         options: {
@@ -96,7 +96,6 @@ ${message}
 
     let reply = (data.response || "").trim();
 
-    // Safety fallback (rare but useful)
     if (!reply) {
       reply = "I’m not able to provide a reliable answer at the moment.";
     }
@@ -109,7 +108,7 @@ ${message}
       bot: {
         text: reply,
         timestamp: new Date().toISOString(),
-        source: "ollama-phi",
+        source: "ollama-phi3:instruct",
       },
     };
 
@@ -133,6 +132,7 @@ ${message}
   }
 });
 
+
 /**
  * Conversation logs
  */
@@ -148,5 +148,5 @@ app.get("/logs/:sessionId", (req, res) => {
  * Start server
  */
 app.listen(PORT, () => {
-  console.log(`🚑 Hospital AI Backend (Phi) running at http://localhost:${PORT}`);
+  console.log(`🚑 Hospital AI Backend running at http://localhost:${PORT}`);
 });

@@ -228,7 +228,7 @@ const dotInterval = setInterval(animateDots, 500);
 
 // Change text after 3 seconds
 setTimeout(() => {
-    currentText = "Assistant is writing";
+    currentText = "Assistant is thinking";
     dotCount = 0;
 }, 3000);
 
